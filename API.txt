@@ -1,0 +1,32 @@
+
+Changes in API for Snapcast with static groups:
+- if no groups are defined a new group named 'default' will be created
+- all new clients will be inserted into the 'first' group (semi random
+- groups are ONLY created and deleted by user (except creation of group 'default'
+
+Standard API:
+=============
+   Client.GetStatus {"id":"00:21:6a:7d:74:fc"}
+   Client.SetVolume {"id":"00:21:6a:7d:74:fc","volume":{"muted":false,"percent":74}}
+   Client.SetLatency {"id":"00:21:6a:7d:74:fc#2","latency":10}
+   Client.SetName {"id":"00:21:6a:7d:74:fc#2","name":"Laptop speaker"}
+
+   Group.GetStatus {"id":"4dcc4e3b-c699-a04b-7f0c-8260d23c43e1"}
+   Group.SetMute {"id":"4dcc4e3b-c699-a04b-7f0c-8260d23c43e1","mute":true}
+
+   Group.SetStream {"id":"4dcc4e3b-c699-a04b-7f0c-8260d23c43e1","stream_id":"stream 1"}
+   Group.SetClients :{"clients":["00:21:6a:7d:74:fc#2","00:21:6a:7d:74:fc"],"id":"4dcc4e3b-c699-a04b-7f0c-8260d23c43e1"}
+
+   Server.GetRPCVersion {}
+   Server.GetStatus {}
+   Server.DeleteClient {"id":"00:21:6a:7d:74:fc"}
+
+New calls:
+==========
+   Group.Delete {"id":"4dcc4e3b-c699-a04b-7f0c-8260d23c43e1"}
+   Group.Rename {"id":"4dcc4e3b-c699-a04b-7f0c-8260d23c43e1","name":"Kids Bedroom zone"}
+   Server.AddGroup {"name":"Living room zone"}
+   Stream.SetMeta {"id":"Spotify","meta":{"ALBUM":"some album","ARTIST":"some artist","TITLE":"some track"}
+
+-frafall
+
