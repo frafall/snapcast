@@ -1,0 +1,37 @@
+#
+# Create a builder image for Alpine/Snapcast
+#
+# export IMAGE=frafall/snapcast-builder
+# export ARGS=--build-arg VERSION=3.9 \ 
+#             --build-arg HAS_EXPAT=1 \ 
+#             --build-arg HAS_PULSEAUDIO=1
+#
+# Build builder image:
+# docker build $(ARGS) -t $(IMAGE) .
+#
+# Compile Snapcast:
+# docker run -it --rm -v `pwd`:/build/snapcast \
+#    /bin/bash -c "(cd /build/snapcast/server && make)"
+#
+ARG VERSION=latest
+FROM alpine:$VERSION AS builder
+
+ARG PUID=0
+ARG HAS_EXPAT=1
+ARG HAS_PULSEAUDIO=1
+
+USER root
+WORKDIR /build
+
+# Install git and other build prereqs
+RUN apk add -U --no-cache git make g++ curl libressl2.7-libcrypto \
+  pulseaudio pulseaudio-dev pulseaudio-zeroconf pulseaudio-system \
+  pulseaudio-utils pulseaudio-libs libvorbis-dev flac-dev alsa-lib \
+  alsa-utils avahi-dev bash linux-headers expat-dev 
+
+# Setup build environment
+ENV HAS_EXPAT=$HAS_EXPAT HAS_PULSEAUDIO=$HAS_PULSEAUDIO
+
+# Make sure we run as same user as caller
+USER $PUID
+
