@@ -1,7 +1,9 @@
 .PHONY: client server
 
-IMAGE=frafall/snapcast-builder
-ARGS=--build-arg VERSION=3.9 \
+ALPINE=3.9
+IMAGE=frafall/snapcast-builder:$(ALPINE)
+
+ARGS=--build-arg VERSION=$(ALPINE) \
      --build-arg HAS_EXPAT=1 \
      --build-arg HAS_PULSEAUDIO=1 \
      --build-arg PUID=`id --user`
@@ -35,7 +37,7 @@ alpine-builder:
 	docker build -f Dockerfile.build $(ARGS) -t $(IMAGE) .
 
 compile-alpine:
-	@if [ !$(docker inspect --type=image frafall/snapcast-builder:latest) ]; then \
+	if [ ! -z `docker inspect --type=image $(IMAGE)` ]; then \
 		$(MAKE) alpine-builder; \
 	fi
 	docker run -it --rm -v `pwd`:/build/snapcast $(IMAGE) \
