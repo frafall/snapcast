@@ -97,6 +97,12 @@ CXXFLAGS += -DHAS_EXPAT
 LDFLAGS  += -lexpat
 endif
 
+ifdef HAS_PULSEAUDIO
+OBJ      += streamreader/pulseaudioStream.o
+CXXFLAGS += -DHAS_PULSEAUDIO
+LDFLAGS  += -lpulse
+endif
+
 
 all:	$(BIN)
 
