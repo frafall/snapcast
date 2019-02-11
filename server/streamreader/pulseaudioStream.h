@@ -27,10 +27,22 @@
  * Connects to Pulseaudio server by native API
  * 
  * usage:
- *   snapserver -s "pulse:///pulseaudio?name=Mopidy&username=<my username>&\
+ *   snapserver -s "pulse:///Pulseaudio?name=Mopidy&username=<my username>&\
  *                  password=<my password>[&devicename=Snapcast][&bitrate=320]\
  *                  [&volume=<volume in percent>][&cache=<cache dir>]"
+ *
+ *   pulseaudio:////my-null-sink?name="Spotify over Pulseaudio"&route-client=client-name
+ *
+ *      use existing sink with same name?
+ *      create new sink if not exists?
+ *      we want to route other pulse audio objects? such as....?
  */
+
+/*
+  Basically a few simple steps:
+    1. create a null sink, use existing if its there  
+    2. setup a routing watcher to move sink-inputs
+*/
 
 class PulseaudioStream : public ProcessStream, WatchdogListener
 {
