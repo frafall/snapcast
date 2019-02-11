@@ -1,7 +1,8 @@
 .PHONY: client server
 
 ALPINE=3.9
-IMAGE=frafall/snapcast-builder:$(ALPINE)
+BUILDER=frafall/snapcast-builder:$(ALPINE)
+IMAGE=frafall/snapserver:$(ALPINE)
 
 ARGS=--build-arg VERSION=$(ALPINE) \
      --build-arg HAS_EXPAT=1 \
@@ -34,12 +35,14 @@ uninstallserver:
 	$(MAKE) uninstall -C server 
 	
 alpine-builder:
-	docker build -f Dockerfile.build $(ARGS) -t $(IMAGE) .
+	docker build -f Dockerfile.build $(ARGS) -t $(BUILDER) .
 
 compile-alpine:
-	if [ ! -z `docker inspect --type=image $(IMAGE)` ]; then \
+	@if [ ! -z `docker inspect --type=image $(BUILDER)` ]; then \
 		$(MAKE) alpine-builder; \
 	fi
-	docker run -it --rm -v `pwd`:/build/snapcast $(IMAGE) \
-	  /bin/bash -c  "(cd /build/snapcast/server && make)"
+	docker run -it --rm -v `pwd`:/build/snapcast $(BUILDER) \
+	  /bin/bash -c  "(cd /build/snapcast && $(MAKE) -C server)"
 
+alpine-image:
+	docker build -f Dockerfile -t $(IMAGE) .

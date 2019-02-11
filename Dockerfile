@@ -2,25 +2,14 @@
 # Build Snapserver for Alpine Linux
 #
 ARG VERSION=latest
-FROM alpine:$VERSION AS builder
-
-ARG HAS_EXPAT
-ARG HAS_PULSEAUDIO
-
+FROM alpine:$VERSION 
 USER root
-WORKDIR /build
 
-# Install git and other prereqs
-RUN apk add -U --no-cache git make g++ curl libressl2.7-libcrypto \
-  pulseaudio pulseaudio-dev pulseaudio-zeroconf pulseaudio-system \
-  pulseaudio-utils pulseaudio-libs libvorbis-dev flac-dev alsa-lib \
-  alsa-utils avahi-dev bash linux-headers expat-dev 
+# Install runtime prereqs
+RUN apk add -U --no-cache libressl2.7-libcrypto pulseaudio-libs \
+    libvorbis flac alsa-lib avahi bash expat
 
-# Setup build environment
-ENV HAS_EXPAT=$HAS_EXPAT HAS_PULSEAUDIO=$HAS_PULSEAUDIO
+# Copy buildt snapserver
+COPY server/snapserver /usr/bin/snapserver
 
-# build snapserver
-RUN cd snapcast/server && make && make installfiles
-
-
-
+# Entrypoint and configuration
