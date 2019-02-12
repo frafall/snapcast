@@ -38,11 +38,12 @@ alpine-builder:
 	docker build -f Dockerfile.build $(ARGS) -t $(BUILDER) .
 
 compile-alpine:
-	@if [ ! -z `docker inspect --type=image $(BUILDER)` ]; then \
+	@docker inspect --type=image $(BUILDER) > /dev/null; \
+	if [ $$? -ne 0 ]; then \
 		$(MAKE) alpine-builder; \
 	fi
 	docker run -it --rm -v `pwd`:/build/snapcast $(BUILDER) \
 	  /bin/bash -c  "(cd /build/snapcast && $(MAKE) -C server)"
 
-alpine-image:
-	docker build -f Dockerfile -t $(IMAGE) .
+alpine-image:	compile-alpine
+	docker build -f Dockerfile --build-arg VERSION=$(ALPINE) -t $(IMAGE) .
